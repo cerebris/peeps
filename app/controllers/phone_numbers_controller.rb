@@ -1,0 +1,2 @@
+class PhoneNumbersController < ApplicationController
+end
