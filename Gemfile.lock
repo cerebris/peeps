@@ -1,11 +1,8 @@
 GIT
-  remote: https://github.com/cerebris/json-api-resources.git
-  revision: 32263e39f8b7ac443c9a4f366d9e324dda7f418d
+  remote: https://github.com/cerebris/jsonapi-resources.git
+  revision: 82e3cbfbb8876534f2d0b9deb721dfd3b0135084
   specs:
-    json-api-resources (0.0.1)
-      activemodel
-      activesupport
-      rails
+    jsonapi-resources (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -118,7 +115,7 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 4.0.0)
   jbuilder (~> 1.2)
-  json-api-resources!
+  jsonapi-resources!
   rails (= 4.1.1)
   sass-rails (~> 4.0.2)
   sdoc

@@ -1,4 +1,6 @@
+require 'jsonapi/routing_ext'
+
 Peeps::Application.routes.draw do
-  resources :contacts
-  resources :phone_numbers
+  jsonapi_resources :contacts
+  jsonapi_resources :phone_numbers
 end

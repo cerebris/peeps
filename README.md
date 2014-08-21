@@ -1,4 +1,5 @@
-# Peeps - A demo app for JSON-API-Resources
+# Peeps - A demo app for JSONAPI-Resources
+
 This basic app is what you will get if you follow the directions below (in theory). This app is a very basic contact
 management system implemented as an API that follows the JSON API spec. Other apps will be written to demonstrate
 writing a consumer for this API. This main one will be an Ember-Orbit UI.
@@ -27,7 +28,7 @@ rake db:create
 Add the gem to your Gemfile
 
 ```
-gem 'json-api-resources', :git => 'https://github.com/cerebris/json-api-resources.git'
+gem 'jsonapi-resources', :git => 'https://github.com/cerebris/jsonapi-resources.git'
 ```
 
 Then bundle
@@ -40,7 +41,7 @@ bundle
 Make the following changes to application_controller.rb
 
 ```
-require 'json/api/resource_controller'
+require 'jsonapi/resource_controller'
 
 class ApplicationController < JSON::API::ResourceController
   # Prevent CSRF attacks by raising an exception.
@@ -131,7 +132,7 @@ Make the two resource files
 contact_resource.rb
 
 ```
-require 'json/api/resource'
+require 'jsonapi/resource'
 
 class ContactResource < JSON::API::Resource
   attributes :id, :name_first, :name_last, :email, :twitter
@@ -142,7 +143,7 @@ end
 and phone_number_resource.rb
 
 ```
-require 'json/api/resource'
+require 'jsonapi/resource'
 
 class PhoneNumberResource < JSON::API::Resource
   attributes :id, :contact_id, :name, :phone_number
@@ -154,12 +155,17 @@ end
 ```
 
 ### Setup routes
+Require jsonapi/routing_ext 
+
+```
+require 'jsonapi/routing_ext'
+```
 
 Add the routes for the new resources
 
 ```
-resources :contacts
-resources :phone_numbers
+jsonapi_resources :contacts
+jsonapi_resources :phone_numbers
 ```
 
 
@@ -193,13 +199,13 @@ Date: Tue, 03 Jun 2014 21:52:05 GMT
 Content-Length: 136
 Connection: Keep-Alive
 
-{"contacts":[{"id":4,"name_first":"John","name_last":"Doe","email":"john.doe@boring.test","twitter":null,"links":{"phone_numbers":[]}}]}
+{"contacts":[{"id":1,"name_first":"John","name_last":"Doe","email":"john.doe@boring.test","twitter":null,"links":{"phone_numbers":[]}}]}
 ```
 
 You can now create a phone number for this contact
 
 ```
-curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"phone_numbers": {"contact_id":"4", "name":"home", "phone_number":"(603) 555-1212"}}' "http://localhost:3000/phone_numbers"
+curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"phone_numbers": {"contact_id":"1", "name":"home", "phone_number":"(603) 555-1212"}}' "http://localhost:3000/phone_numbers"
 ```
 
 And you should get back something like this:
@@ -260,4 +266,10 @@ curl -i -H "Accept: application/json" "http://localhost:3000/contacts?include=ph
 and some fields:
 ```
 curl -i -H "Accept: application/json" "http://localhost:3000/contacts?include=phone_numbers&fields%5Bcontacts%5D=name_first,name_last&fields%5Bphone_numbers%5D=name"
+```
+
+
+Test a validation Error
+```
+curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"contacts": {"name_first":"John Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
 ```

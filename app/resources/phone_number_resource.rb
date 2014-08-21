@@ -1,6 +1,6 @@
-require 'json/api/resource'
+require 'jsonapi/resource'
 
-class PhoneNumberResource < JSON::API::Resource
+class PhoneNumberResource < JSONAPI::Resource
   attributes :id, :contact_id, :name, :phone_number
   has_one :contact
 
