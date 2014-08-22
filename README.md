@@ -1,8 +1,11 @@
-# Peeps - A demo app for JSONAPI-Resources
+# Peeps: A demo of JSONAPI-Resources
 
-This basic app is what you will get if you follow the directions below (in theory). This app is a very basic contact
-management system implemented as an API that follows the JSON API spec. Other apps will be written to demonstrate
-writing a consumer for this API. This main one will be an Ember-Orbit UI.
+Peeps is a very basic contact management system implemented as an API that follows the JSON API spec. 
+
+Other apps will soon be written to demonstrate writing a consumer for this API.
+
+The instructions below were used to create this app.
+
 
 ## Initial Steps to create this app
 
@@ -28,7 +31,7 @@ rake db:create
 Add the gem to your Gemfile
 
 ```
-gem 'jsonapi-resources', :git => 'https://github.com/cerebris/jsonapi-resources.git'
+gem 'jsonapi-resources'
 ```
 
 Then bundle
