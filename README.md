@@ -27,7 +27,7 @@ rails new peeps -d postgresql --skip-javascript
 rake db:create
 ```
 
-### Add the JSON-API-Resources gem
+### Add the JSONAPI-Resources gem
 Add the gem to your Gemfile
 
 ```
@@ -46,7 +46,7 @@ Make the following changes to application_controller.rb
 ```
 require 'jsonapi/resource_controller'
 
-class ApplicationController < JSON::API::ResourceController
+class ApplicationController < JSONAPI::ResourceController
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
@@ -60,7 +60,7 @@ Eager loading of classes is recommended. The code will work without it, but I th
 See http://blog.plataformatec.com.br/2012/08/eager-loading-for-greater-good/
 
 ```
-  # Eager load code on boot so JSON-API-Resources resources are loaded and processed globally
+  # Eager load code on boot so JSONAPI-Resources resources are loaded and processed globally
   config.eager_load = true
 ```
 
@@ -148,7 +148,7 @@ and phone_number_resource.rb
 ```
 require 'jsonapi/resource'
 
-class PhoneNumberResource < JSON::API::Resource
+class PhoneNumberResource < JSONAPI::Resource
   attributes :id, :contact_id, :name, :phone_number
   has_one :contact
 
