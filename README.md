@@ -40,7 +40,7 @@ Then bundle
 bundle
 ```
 
-### Derive Application Controller from JSON::API::ResourceController
+### Derive Application Controller from JSONAPI::ResourceController
 Make the following changes to application_controller.rb
 
 ```
