@@ -138,7 +138,7 @@ contact_resource.rb
 require 'jsonapi/resource'
 
 class ContactResource < JSONAPI::Resource
-  attributes :id, :name_first, :name_last, :email, :twitter
+  attributes :name_first, :name_last, :email, :twitter
   has_many :phone_numbers
 end
 ```
@@ -149,10 +149,10 @@ and phone_number_resource.rb
 require 'jsonapi/resource'
 
 class PhoneNumberResource < JSONAPI::Resource
-  attributes :id, :contact_id, :name, :phone_number
+  attributes :name, :phone_number
   has_one :contact
 
-  filter :contact_id
+  filter :contact
 end
 
 ```
@@ -182,7 +182,7 @@ rails server
 
 Create a new contact
 ```
-curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"contacts": {"name_first":"John", "name_last":"Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
+curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"contacts", "name-first":"John", "name-last":"Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
 ```
 
 You should get something like this back
@@ -191,24 +191,24 @@ HTTP/1.1 201 Created
 X-Frame-Options: SAMEORIGIN
 X-Xss-Protection: 1; mode=block
 X-Content-Type-Options: nosniff
-X-Ua-Compatible: chrome=1
-Content-Type: application/json; charset=utf-8
-Etag: "f53782c69bd6748c5a69254e92bca7ec"
+Content-Type: application/vnd.api+json
+Etag: W/"aba27b88b6c51f0910ec995ab613e679"
 Cache-Control: max-age=0, private, must-revalidate
-X-Request-Id: d8475c6a-ba4d-48a4-b41d-6f1144fcc8cb
-X-Runtime: 0.070850
-Server: WEBrick/1.3.1 (Ruby/2.1.1/2014-02-24)
-Date: Tue, 03 Jun 2014 21:52:05 GMT
-Content-Length: 136
+X-Request-Id: 998edda8-e29a-4dfa-ad68-2b524d660aa7
+X-Runtime: 0.147099
+Server: WEBrick/1.3.1 (Ruby/2.2.0/2014-12-25)
+Date: Thu, 19 Mar 2015 22:28:15 GMT
+Content-Length: 312
 Connection: Keep-Alive
 
-{"contacts":[{"id":1,"name_first":"John","name_last":"Doe","email":"john.doe@boring.test","twitter":null,"links":{"phone_numbers":[]}}]}
+{"data":{"id":"1","name-first":"John","name-last":"Doe","email":"john.doe@boring.test","twitter":null,"type":"contacts","links":{"self":"http://localhost:3000/contacts/1","phone-numbers":{"self":"http://localhost:3000/contacts/1/links/phone-numbers","related":"http://localhost:3000/contacts/1/phone-numbers"}}}}
+
 ```
 
 You can now create a phone number for this contact
 
 ```
-curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"phone_numbers": {"contact_id":"1", "name":"home", "phone_number":"(603) 555-1212"}}' "http://localhost:3000/phone_numbers"
+curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"phone-numbers", "links": {"contact": {"type": "contacts", "id":"1"}}, "name":"home", "phone-number":"(603) 555-1212"}}' "http://localhost:3000/phone-numbers"
 ```
 
 And you should get back something like this:
@@ -218,24 +218,23 @@ HTTP/1.1 201 Created
 X-Frame-Options: SAMEORIGIN
 X-Xss-Protection: 1; mode=block
 X-Content-Type-Options: nosniff
-X-Ua-Compatible: chrome=1
-Content-Type: application/json; charset=utf-8
-Etag: "6e11338169a479367027dc7ba03a706e"
+Content-Type: application/vnd.api+json
+Etag: W/"2addda2f434de1f85a7997e1d6185a2b"
 Cache-Control: max-age=0, private, must-revalidate
-X-Request-Id: 0b7cfd59-7fd0-4a31-ab95-2fdbb1352b4e
-X-Runtime: 0.022276
-Server: WEBrick/1.3.1 (Ruby/2.1.1/2014-02-24)
-Date: Tue, 03 Jun 2014 21:56:10 GMT
-Content-Length: 111
+X-Request-Id: 18febd47-a3e5-471e-8f8b-adf0db6c68fb
+X-Runtime: 0.018462
+Server: WEBrick/1.3.1 (Ruby/2.2.0/2014-12-25)
+Date: Thu, 19 Mar 2015 22:28:38 GMT
+Content-Length: 315
 Connection: Keep-Alive
 
-{"phone_numbers":[{"id":1,"contact_id":4,"name":"home","phone_number":"(603) 555-1212","links":{"contact":4}}]}
+{"data":{"id":"1","name":"home","phone-number":"(603) 555-1212","type":"phone_numbers","links":{"self":"http://localhost:3000/phone-numbers/1","contact":{"self":"http://localhost:3000/phone-numbers/1/links/contact","related":"http://localhost:3000/phone-numbers/1/contact","linkage":{"type":"contacts","id":"1"}}}}}
 ```
 
 You can now query all one of your contacts
 
 ```
-curl -i -H "Accept: application/json" "http://localhost:3000/contacts"
+curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts"
 ```
 
 And you get this back:
@@ -245,34 +244,32 @@ HTTP/1.1 200 OK
 X-Frame-Options: SAMEORIGIN
 X-Xss-Protection: 1; mode=block
 X-Content-Type-Options: nosniff
-X-Ua-Compatible: chrome=1
-Content-Type: application/json; charset=utf-8
-Etag: "ef778cd5d944b904993aa7d3fd552c6e"
+Content-Type: application/vnd.api+json
+Etag: W/"577b17ec60006c68fb522a2af809132a"
 Cache-Control: max-age=0, private, must-revalidate
-X-Request-Id: 009bb302-e3bc-41a0-a74d-1947d5e98b20
-X-Runtime: 0.003116
-Server: WEBrick/1.3.1 (Ruby/2.1.1/2014-02-24)
-Date: Tue, 03 Jun 2014 21:58:04 GMT
-Content-Length: 137
+X-Request-Id: 524e0eb7-fb0d-4d26-9ba2-627bb625ab25
+X-Runtime: 0.003388
+Server: WEBrick/1.3.1 (Ruby/2.2.0/2014-12-25)
+Date: Thu, 19 Mar 2015 22:29:05 GMT
+Content-Length: 314
 Connection: Keep-Alive
 
-{"contacts":[{"id":4,"name_first":"John","name_last":"Doe","email":"john.doe@boring.test","twitter":null,"links":{"phone_numbers":[1]}}]}
+{"data":[{"id":"1","name-first":"John","name-last":"Doe","email":"john.doe@boring.test","twitter":null,"type":"contacts","links":{"self":"http://localhost:3000/contacts/1","phone-numbers":{"self":"http://localhost:3000/contacts/1/links/phone-numbers","related":"http://localhost:3000/contacts/1/phone-numbers"}}}]}
 ```
 
 Note that the phone_number id is included in the links, but not the details of the phone number. You can get these by
 setting an include:
 
 ```
-curl -i -H "Accept: application/json" "http://localhost:3000/contacts?include=phone_numbers"
+curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts?include=phone-numbers"
 ```
 
 and some fields:
 ```
-curl -i -H "Accept: application/json" "http://localhost:3000/contacts?include=phone_numbers&fields%5Bcontacts%5D=name_first,name_last&fields%5Bphone_numbers%5D=name"
+curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts?include=phone-numbers&fields%5Bcontacts%5D=name-first,name-last&fields%5Bphone-numbers%5D=name"
 ```
-
 
 Test a validation Error
 ```
-curl -i -H "Accept: application/json" -H 'Content-Type:application/json' -X POST -d '{"contacts": {"name_first":"John Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
+curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"contacts", "name-first":"John Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
 ```
