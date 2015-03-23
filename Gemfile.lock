@@ -55,7 +55,7 @@ GEM
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     json (1.8.2)
-    jsonapi-resources (0.2.0)
+    jsonapi-resources (0.3.0.pre1)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -129,7 +129,7 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 4.0.0)
   jbuilder (~> 1.2)
-  jsonapi-resources
+  jsonapi-resources (~> 0.3.0.pre1)
   rails (= 4.2)
   sass-rails (~> 4.0.2)
   sdoc

@@ -39,4 +39,4 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'jsonapi-resources'
+gem 'jsonapi-resources', '~> 0.3.0.pre1'
