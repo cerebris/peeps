@@ -11,39 +11,39 @@ The instructions below were used to create this app.
 
 ### Create a new Rails application
 
-```
+```bash
 rails new peeps --skip-javascript
 ```
 
 or
 
-```
+```bash
 rails new peeps -d postgresql --skip-javascript
 ```
 
 ### Create the databases
 
-```
+```bash
 rake db:create
 ```
 
 ### Add the JSONAPI-Resources gem
 Add the gem to your Gemfile
 
-```
+```bash
 gem 'jsonapi-resources'
 ```
 
 Then bundle
 
-```
+```bash
 bundle
 ```
 
 ### Derive Application Controller from JSONAPI::ResourceController
 Make the following changes to application_controller.rb
 
-```
+```ruby
 require 'jsonapi/resource_controller'
 
 class ApplicationController < JSONAPI::ResourceController
@@ -59,14 +59,14 @@ Edit config/environments/development.rb
 Eager loading of classes is recommended. The code will work without it, but I think it's the right way to go.
 See http://blog.plataformatec.com.br/2012/08/eager-loading-for-greater-good/
 
-```
+```ruby
   # Eager load code on boot so JSONAPI-Resources resources are loaded and processed globally
   config.eager_load = true
 ```
 
 
 
-```
+```ruby
 config.consider_all_requests_local       = false
 ```
 
@@ -78,25 +78,25 @@ necessary, but it makes for nicer output when debugging using curl or a client l
 ### Create Models for our data
 Use the standard rails generator to create a model for Contacts and one for related PhoneNumbers
 
-```
+```bash
 rails g model Contact name_first:string name_last:string email:string twitter:string
 ```
 
 Edit the model
-```
+```ruby
 class Contact < ActiveRecord::Base
   has_many :phone_numbers
 end
 ```
 
 Create the PhoneNumber model
-```
+```bash
 rails g model PhoneNumber contact_id:integer name:string phone_number:string
 ```
 
 Edit it
 
-```
+```ruby
 class PhoneNumber < ActiveRecord::Base
   belongs_to :contact
 end
@@ -104,7 +104,7 @@ end
 
 ### Migrate the DB
 
-```
+```bash
 rake db:migrate
 ```
 
@@ -112,7 +112,7 @@ rake db:migrate
 Use the rails generator to create empty controllers. These will be inherit methods from the ResourceController so
 they will know how to respond to the standard REST methods.
 
-```
+```bash
 rails g controller Contacts --skip-assets
 rails g controller PhoneNumbers --skip-assets
 ```
@@ -121,7 +121,7 @@ rails g controller PhoneNumbers --skip-assets
 
 We need a directory to hold our resources. Let's put in under our app directory
 
-```
+```bash
 mkdir app/resources
 ```
 
@@ -134,7 +134,7 @@ Make the two resource files
 
 contact_resource.rb
 
-```
+```ruby
 require 'jsonapi/resource'
 
 class ContactResource < JSONAPI::Resource
@@ -145,7 +145,7 @@ end
 
 and phone_number_resource.rb
 
-```
+```ruby
 require 'jsonapi/resource'
 
 class PhoneNumberResource < JSONAPI::Resource
@@ -160,13 +160,13 @@ end
 ### Setup routes
 Require jsonapi/routing_ext 
 
-```
+```ruby
 require 'jsonapi/routing_ext'
 ```
 
 Add the routes for the new resources
 
-```
+```ruby
 jsonapi_resources :contacts
 jsonapi_resources :phone_numbers
 ```
@@ -176,12 +176,12 @@ jsonapi_resources :phone_numbers
 
 Launch the app
 
-```
+```bash
 rails server
 ```
 
 Create a new contact
-```
+```bash
 curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"contacts", "name-first":"John", "name-last":"Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
 ```
 
@@ -233,7 +233,7 @@ Connection: Keep-Alive
 
 You can now query all one of your contacts
 
-```
+```bash
 curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts"
 ```
 
@@ -260,16 +260,16 @@ Connection: Keep-Alive
 Note that the phone_number id is included in the links, but not the details of the phone number. You can get these by
 setting an include:
 
-```
+```bash
 curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts?include=phone-numbers"
 ```
 
 and some fields:
-```
+```bash
 curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts?include=phone-numbers&fields%5Bcontacts%5D=name-first,name-last&fields%5Bphone-numbers%5D=name"
 ```
 
 Test a validation Error
-```
+```bash
 curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"contacts", "name-first":"John Doe", "email":"john.doe@boring.test"}}' http://localhost:3000/contacts
 ```
