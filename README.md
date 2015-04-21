@@ -103,7 +103,7 @@ Edit it
 
 ```ruby
 class PhoneNumber < ActiveRecord::Base
-  belongs_to :contact
+  has_one :contact
 end
 ```
 
