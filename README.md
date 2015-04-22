@@ -82,6 +82,11 @@ Edit the model
 ```ruby
 class Contact < ActiveRecord::Base
   has_many :phone_numbers
+
+  ### Validations
+  validates :name_first, presence: true
+  validates :name_last, presence: true
+
 end
 ```
 
@@ -94,7 +99,7 @@ Edit it
 
 ```ruby
 class PhoneNumber < ActiveRecord::Base
-  belongs_to :contact
+  has_one :contact
 end
 ```
 
