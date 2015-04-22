@@ -44,8 +44,6 @@ bundle
 Make the following changes to application_controller.rb
 
 ```ruby
-require 'jsonapi/resource_controller'
-
 class ApplicationController < JSONAPI::ResourceController
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -63,8 +61,6 @@ See http://blog.plataformatec.com.br/2012/08/eager-loading-for-greater-good/
   # Eager load code on boot so JSONAPI-Resources resources are loaded and processed globally
   config.eager_load = true
 ```
-
-
 
 ```ruby
 config.consider_all_requests_local       = false
@@ -135,8 +131,6 @@ Make the two resource files
 contact_resource.rb
 
 ```ruby
-require 'jsonapi/resource'
-
 class ContactResource < JSONAPI::Resource
   attributes :name_first, :name_last, :email, :twitter
   has_many :phone_numbers
@@ -146,8 +140,6 @@ end
 and phone_number_resource.rb
 
 ```ruby
-require 'jsonapi/resource'
-
 class PhoneNumberResource < JSONAPI::Resource
   attributes :name, :phone_number
   has_one :contact
@@ -158,11 +150,6 @@ end
 ```
 
 ### Setup routes
-Require jsonapi/routing_ext 
-
-```ruby
-require 'jsonapi/routing_ext'
-```
 
 Add the routes for the new resources
 
