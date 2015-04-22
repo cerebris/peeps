@@ -208,7 +208,7 @@ Connection: Keep-Alive
 You can now create a phone number for this contact
 
 ```
-curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"phone-numbers", "links": {"contact": {"type": "contacts", "id":"1"}}, "name":"home", "phone-number":"(603) 555-1212"}}' "http://localhost:3000/phone-numbers"
+curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{"data": {"type":"phone-numbers", "links": {"contact": {"linkage": {"type": "contacts", "id":"1"}}}, "name":"home", "phone-number":"(603) 555-1212"}}' "http://localhost:3000/phone-numbers"
 ```
 
 And you should get back something like this:
