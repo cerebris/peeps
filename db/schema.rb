@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20140603212327) do
 
-  create_table "contacts", force: true do |t|
+  create_table "contacts", force: :cascade do |t|
     t.string   "name_first"
     t.string   "name_last"
     t.string   "email"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20140603212327) do
     t.datetime "updated_at"
   end
 
-  create_table "phone_numbers", force: true do |t|
+  create_table "phone_numbers", force: :cascade do |t|
     t.integer  "contact_id"
     t.string   "name"
     t.string   "phone_number"
