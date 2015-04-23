@@ -1,3 +1,3 @@
 class PhoneNumber < ActiveRecord::Base
-  has_one :contact
+  belongs_to :contact
 end
