@@ -5,3 +5,21 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+contacts = []
+20.times do
+  contacts << Contact.create({
+    name_first: Faker::Name.first_name,
+    name_last: Faker::Name.last_name,
+    email: Faker::Internet.safe_email,
+    twitter: "@#{Faker::Internet.user_name}"
+  })
+end
+
+contacts.each do |contact|
+  contact.phone_numbers.create({
+    name: 'cell',
+    phone_number: Faker::PhoneNumber.cell_phone
+  })
+end
+
