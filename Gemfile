@@ -39,4 +39,6 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'faker', group: [:development, :test]
+
 gem 'jsonapi-resources'
