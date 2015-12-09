@@ -40,8 +40,20 @@ Then bundle
 bundle
 ```
 
-### Derive Application Controller from JSONAPI::ResourceController
+### Application Controller 
 Make the following changes to application_controller.rb
+
+```ruby
+class ApplicationController < ActionController::Base
+  include JSONAPI::ActsAsResourceController
+  
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :null_session
+end
+```
+
+OR
 
 ```ruby
 class ApplicationController < JSONAPI::ResourceController
@@ -50,6 +62,8 @@ class ApplicationController < JSONAPI::ResourceController
   protect_from_forgery with: :null_session
 end
 ```
+
+You can also do this on a per controller basis in your app, if only some controllers will serve the API.
 
 ### Configure Development Environment
 Edit config/environments/development.rb
