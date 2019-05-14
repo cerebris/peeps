@@ -83,6 +83,35 @@ config.consider_all_requests_local       = false
 This will prevent the server from returning the HTML formatted error messages when an exception happens. Not strictly
 necessary, but it makes for nicer output when debugging using curl or a client library.
 
+### CORS - optional
+
+You might run into CORS issues when accessing from the browser. You can use the `rack-cors` gem to allow sharing across 
+origins. See [https://github.com/cyu/rack-cors](https://github.com/cyu/rack-cors) for more details.
+
+Add the gem to your Gemfile
+
+```bash
+gem 'rack-cors'
+```
+
+Add the CORS middleware to your `config/application.rb`:
+
+```rb
+# Example only, please understand CORS before blindly adding this configuration
+# This is not enabled in the peeps source code.
+module Peeps
+  class Application < Rails::Application
+    config.middleware.insert_before 0, 'Rack::Cors', :debug => !Rails.env.production?, :logger => (-> { Rails.logger }) do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :patch, :delete, :options]
+      end
+    end
+  end
+end
+
+```
+
 ## Now let's put some meat into the app
 
 ### Create Models for our data
