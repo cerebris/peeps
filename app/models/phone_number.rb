@@ -1,3 +1,3 @@
-class PhoneNumber < ActiveRecord::Base
+class PhoneNumber < ApplicationRecord
   belongs_to :contact
 end
