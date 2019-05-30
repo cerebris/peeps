@@ -1,0 +1,2 @@
+class MacOsController < ApplicationController
+end

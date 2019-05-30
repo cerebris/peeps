@@ -1,0 +1,2 @@
+class MacOs < ApplicationRecord
+end

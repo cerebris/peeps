@@ -3,4 +3,5 @@ Rails.application.routes.draw do
 
   jsonapi_resources :contacts
   jsonapi_resources :phone_numbers
+  jsonapi_resources :mac_os
 end

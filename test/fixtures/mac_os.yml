@@ -1,0 +1,74 @@
+Cheetah:
+  id: 1000
+  name: Cheetah
+  version: 0
+
+Puma:
+  id: 1001
+  name: Puma
+  version: 1
+
+Jaguar:
+  id: 1002
+  name: Jaguar
+  version: 2
+
+Panther:
+  id: 1003
+  name: Panther
+  version: 3
+
+Tiger:
+  id: 1004
+  name: Tiger
+  version: 4
+
+Leopard:
+  id: 1005
+  name: Leopard
+  version: 5
+
+SnowLeopard:
+  id: 1006
+  name: Snow Leopard
+  version: 6
+
+Lion:
+  id: 1007
+  name: Lion
+  version: 7
+
+MountainLion:
+  id: 1008
+  name: Mountain Lion
+  version: 8
+
+Mavericks:
+  id: 1009
+  name: Mavericks
+  version: 9
+
+Yosemite:
+  id: 1010
+  name: Yosemite
+  version: 10
+
+ElCapitan:
+  id: 1011
+  name: El Capitan
+  version: 11
+
+Sierra:
+  id: 1012
+  name: Yosemite
+  version: 12
+
+HighSierra:
+  id: 1013
+  name: High Sierra
+  version: 13
+
+Mojave:
+  id: 1014
+  name: Mojave
+  version: 14
