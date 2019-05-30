@@ -76,7 +76,7 @@ GEM
     io-like (0.3.0)
     jbuilder (2.9.0)
       activesupport (>= 4.2.0)
-    jsonapi-resources (0.9.6)
+    jsonapi-resources (0.9.7)
       activerecord (>= 4.1)
       concurrent-ruby
       railties (>= 4.1)
