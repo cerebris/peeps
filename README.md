@@ -307,3 +307,153 @@ Test a validation Error
 ```bash
 curl -i -H "Accept: application/vnd.api+json" -H 'Content-Type:application/vnd.api+json' -X POST -d '{ "data": { "type": "contacts", "attributes": { "name-first": "John Doe", "email": "john.doe@boring.test" } } }' http://localhost:3000/contacts
 ```
+
+## Handling More Data
+
+The earlier responses seem pretty snappy, but they are not really returning a lot of data. In a real world system there will be a lot more data. Lets mock some with the faker gem.
+
+### Add fake data for testing
+
+Add the `faker` gem to your Gemfile
+
+```ruby
+gem 'faker', group: [:development, :test]
+```
+
+And add some seed data using the seeds file
+
+```ruby
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
+#
+# Examples:
+#
+#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
+#   Character.create(name: 'Luke', movie: movies.first)
+
+contacts = []
+20000.times do
+  contacts << Contact.create({
+                               name_first: Faker::Name.first_name,
+                               name_last: Faker::Name.last_name,
+                               email: Faker::Internet.safe_email,
+                               twitter: "@#{Faker::Internet.user_name}"
+                             })
+end
+
+contacts.each do |contact|
+  contact.phone_numbers.create({
+                                 name: 'cell',
+                                 phone_number: Faker::PhoneNumber.cell_phone
+                               })
+
+  contact.phone_numbers.create({
+                                 name: 'home',
+                                 phone_number: Faker::PhoneNumber.phone_number
+                               })
+end
+
+```
+
+Now lets add the seed data (note this may run for a while):
+
+```bash
+bundle install
+rails db:seed
+```
+
+### Large requests take to long to complete
+
+Now if we query our contacts we will get a large (20K contacts) dataset back, and it may run for many seconds (about 8 on my system)
+
+```bash
+curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts"
+```
+
+### Options
+
+There are some things we can do to work around this. First we should add a config file to our initializers. Add a file named `jsonapi_resources.rb` to the `config/initializers` directory and add this:
+
+```ruby
+JSONAPI.configure do |config|
+  # Config setting will go here
+end
+```
+
+#### Caching
+
+We can enable caching so the next request will not require the system to process all 20K records again.
+
+We first need to turn on caching for the rails portion of the application with the following:
+
+```bash
+rails dev:cache
+```
+
+To enable caching of JSONAPI responses we need to specify which cache to use (and in version v0.10.x and later that we want all resources cached by default). So add the following to the initializer you created earlier:
+
+```ruby
+JSONAPI.configure do |config|
+  config.resource_cache = Rails.cache
+  # The following option works in versions v0.10 and later
+  #config.default_caching = true
+ end 
+```
+
+If using an earlier version than v0.10.x we need to enable caching for each resource type we want the system to cache. Add the following line to the `contacts` ressource:
+
+```ruby
+class ContactResource < JSONAPI::Resource
+  caching
+  #...
+end
+```
+
+If we restart the application and make the same request it will still take the same amount of time (actually a tiny bit more as the resources are added to the cache). However if we perform the same request the time should drop significantly, going from ~8s to ~1.6s on my system for the same 20K contacts.
+
+We might be able to live with performance of the cached results, but we should plan for the worst case. So we need another solution to keep our responses snappy.
+
+#### Pagination
+
+Instead of returning the full result set when the user asks for it, we can break it into smaller pages of data. That way the server never needs to serialize every resource in the system at once.
+
+We can add pagination with a config option in the initializer. Add the following to `config/initializers/jsonapi_resources.rb`:
+
+```ruby
+JSONAPI.configure do |config|
+  config.resource_cache = Rails.cache
+  # config.default_caching = true
+
+  # Options are :none, :offset, :paged, or a custom paginator name
+  config.default_paginator = :paged # default is :none
+
+  config.default_page_size = 50 # default is 10
+  config.maximum_page_size = 100 # default is 20 
+end
+```
+
+Restart the system and try the request again:
+
+```bash
+curl -i -H "Accept: application/vnd.api+json" "http://localhost:3000/contacts"
+```
+
+
+Now we only get the first 50 contacts back, and the request is much faster (about 80ms). And you will now see a `links` key with links to get the remaining resources in your set. This should look like this:
+
+```json
+{
+    "data":[...],
+    "links": {
+    "first":"http://localhost:3000/contacts?page%5Bnumber%5D=1&page%5Bsize%5D=50",
+    "next":"http://localhost:3000/contacts?page%5Bnumber%5D=2&page%5Bsize%5D=50",
+    "last":"http://localhost:3000/contacts?page%5Bnumber%5D=401&page%5Bsize%5D=50",
+    }
+}
+```
+
+This will allow your client to iterate over the `next` links to fetch the full results set without putting extreme pressure on your server.
+
+The `default_page_size` setting is used if the request does not specify a size, and the `maximum_page_size` is used to limit the size the client may request.
+
+*Note:* The default page sizes are very conservative. There is significant overhead in making many small requests, and tuning the page sizes should be considered essential. 

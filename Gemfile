@@ -28,6 +28,9 @@ gem 'jbuilder', '~> 2.5'
 # gem 'rack-cors'
 
 gem 'jsonapi-resources'
+# gem 'jsonapi-resources', '~>0.10.0.beta7'
+
+gem 'faker', group: [:development, :test]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
