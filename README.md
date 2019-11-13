@@ -101,13 +101,27 @@ Add the CORS middleware to your `config/application.rb`:
 # This is not enabled in the peeps source code.
 module Peeps
   class Application < Rails::Application
-    config.middleware.insert_before 0, 'Rack::Cors', :debug => !Rails.env.production?, :logger => (-> { Rails.logger }) do
+    # ...
+
+    # Rails 5
+
+    config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :patch, :delete, :options]
+        resource '*', headers: :any, methods: [:get, :post, :options]
       end
     end
-  end
+
+    # Rails 3/4
+
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options]
+      end
+    end
+
+end
 end
 
 ```
